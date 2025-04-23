@@ -1,7 +1,9 @@
-# Создание экземпляра класса для работы с API сайтов с вакансиями
+from src.filter_vacancies import filter_vacancies
 from src.head_hunter_api import HeadHunterAPI
+from src.json_vacancy_manager import JSONSaver
 from src.vacancy import Vacancy
 
+# Создание экземпляра класса для работы с API сайтов с вакансиями
 hh_api = HeadHunterAPI()
 
 # Получение вакансий с hh.ru в формате JSON
@@ -10,8 +12,8 @@ hh_vacancies = hh_api.get_vacancies("Python")
 # Преобразование набора данных из JSON в список объектов
 vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
 
-# Пример работы контструктора класса с одной вакансией
-vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.", "Требования: опыт работы от 3 лет...")
+# Пример работы конструктора класса с одной вакансией
+vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/118591608>", "100 000-150 000 руб.", "Требования: опыт работы от 3 лет...")
 
 # Сохранение информации о вакансиях в файл
 json_saver = JSONSaver()
@@ -28,11 +30,11 @@ def user_interaction():
 
     filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
 
-    ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
-
-    sorted_vacancies = sort_vacancies(ranged_vacancies)
-    top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
-    print_vacancies(top_vacancies)
+    # ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
+    #
+    # sorted_vacancies = sort_vacancies(ranged_vacancies)
+    # top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
+    # print_vacancies(top_vacancies)
 
 
 if __name__ == "__main__":
