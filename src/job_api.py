@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
+
 class JobAPI(ABC):
 
     @abstractmethod
-    def _connect(self):
+    def _connect(self): # type: ignore
         pass
 
     @abstractmethod

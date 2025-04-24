@@ -10,11 +10,10 @@ class JSONSaver(VacancyManager):
     Класс для управления вакансиями с использованием JSON-файла.
     """
 
-    def __init__(self, filename=settings_path):
+    def __init__(self, filename=settings_path): # type: ignore
         self.__filename = filename
 
-
-    def get_vacancies(self, **kwargs):
+    def get_vacancies(self, **kwargs): # type: ignore
         try:
             with open(self.__filename, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -24,8 +23,7 @@ class JSONSaver(VacancyManager):
         except (FileNotFoundError, json.JSONDecodeError):
             return []
 
-
-    def add_vacancy(self, new_vacancy: Vacancy) -> None:
+    def add_vacancy(self, new_vacancy: Vacancy): # type: ignore
         """Метод для добавления вакансии в файл"""
         existing_data = self.get_vacancies()
 
@@ -36,9 +34,8 @@ class JSONSaver(VacancyManager):
         # Проверка на дублирование
         if new_vacancy not in existing_data:
             existing_data.append(new_vacancy)
-            with open(self.__filename, 'w', encoding='utf-8') as file:
+            with open(self.__filename, "w", encoding="utf-8") as file:
                 json.dump(existing_data, file, ensure_ascii=False, indent=4)
-
 
     def delete_vacancy(self, vacancy_id: Vacancy) -> None:
         """Удаляет информацию о вакансии."""
@@ -50,6 +47,5 @@ class JSONSaver(VacancyManager):
 
         # Если длина нового списка меньше, значит была удалена вакансия
         if len(new_data) < len(data):
-            with open(self.__filename, 'w', encoding='utf-8') as f:
+            with open(self.__filename, "w", encoding="utf-8") as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
-
