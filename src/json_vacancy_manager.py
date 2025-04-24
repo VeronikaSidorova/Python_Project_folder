@@ -1,0 +1,51 @@
+import json
+
+from src.head_hunter_api import settings_path
+from src.vacancy import Vacancy
+from src.vacancy_manager import VacancyManager
+
+
+class JSONSaver(VacancyManager):
+    """
+    Класс для управления вакансиями с использованием JSON-файла.
+    """
+
+    def __init__(self, filename=settings_path): # type: ignore
+        self.__filename = filename
+
+    def get_vacancies(self, **kwargs): # type: ignore
+        try:
+            with open(self.__filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if not isinstance(data, list):
+                    return []
+                return data
+        except (FileNotFoundError, json.JSONDecodeError):
+            return []
+
+    def add_vacancy(self, new_vacancy: Vacancy): # type: ignore
+        """Метод для добавления вакансии в файл"""
+        existing_data = self.get_vacancies()
+
+        # Преобразование объекта Vacancy в словарь, если это необходимо
+        if isinstance(new_vacancy, Vacancy):
+            new_vacancy = new_vacancy.to_dict()  # Преобразуем объект в словарь
+
+        # Проверка на дублирование
+        if new_vacancy not in existing_data:
+            existing_data.append(new_vacancy)
+            with open(self.__filename, "w", encoding="utf-8") as file:
+                json.dump(existing_data, file, ensure_ascii=False, indent=4)
+
+    def delete_vacancy(self, vacancy_id: Vacancy) -> None:
+        """Удаляет информацию о вакансии."""
+        data = self.get_vacancies()
+        vacancy_url = vacancy_id.url  # Получаем URL из объекта Vacancy
+
+        # Фильтруем вакансии, исключая ту, которую нужно удалить
+        new_data = [item for item in data if item.get("url") != vacancy_url]
+
+        # Если длина нового списка меньше, значит была удалена вакансия
+        if len(new_data) < len(data):
+            with open(self.__filename, "w", encoding="utf-8") as f:
+                json.dump(new_data, f, ensure_ascii=False, indent=4)
