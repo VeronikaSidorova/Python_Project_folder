@@ -41,4 +41,4 @@ class HeadHunterAPI(JobAPI):
         except requests.RequestException as e:
             print(f"Ошибка при получении вакансий: {e}")
             return []
-
+        

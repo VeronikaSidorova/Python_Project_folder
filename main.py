@@ -1,4 +1,4 @@
-from src.filter_vacancies import filter_vacancies
+from src.utils import filter_vacancies, get_vacancies_by_salary, sort_vacancies, get_top_vacancies, print_vacancies
 from src.head_hunter_api import HeadHunterAPI
 from src.json_vacancy_manager import JSONSaver
 from src.vacancy import Vacancy
@@ -30,11 +30,13 @@ def user_interaction():
 
     filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
 
-    # ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
-    #
-    # sorted_vacancies = sort_vacancies(ranged_vacancies)
-    # top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
-    # print_vacancies(top_vacancies)
+    ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
+
+    sorted_vacancies = sort_vacancies(ranged_vacancies)
+
+    top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
+
+    print_vacancies(top_vacancies)
 
 
 if __name__ == "__main__":

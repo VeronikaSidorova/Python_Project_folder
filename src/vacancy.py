@@ -85,10 +85,24 @@ class Vacancy:
                 url = vacancy['alternate_url']
                 salary = vacancy['salary']
                 company = vacancy['employer']['name']
-
+                # Формируем строку зарплаты
+                salary_str = ""
+                if isinstance(salary, dict):
+                    from_salary = salary.get('from')
+                    to_salary = salary.get('to')
+                    if from_salary is not None and to_salary is not None:
+                        salary_str = f"{from_salary} - {to_salary} {salary['currency']}"
+                    elif from_salary is not None:
+                        salary_str = f"от {from_salary} {salary['currency']}"
+                    elif to_salary is not None:
+                        salary_str = f"до {to_salary} {salary['currency']}"
+                    else:
+                        salary_str = "не указана"
+                else:
+                    salary_str = str(salary)  # Если зарплата уже строка
 
                 # Создаем объект Vacancy и добавляем его в список
-                vacancies_objects.append(Vacancy(title, salary, company, url))
+                vacancies_objects.append(Vacancy(title, url, salary_str, company))
             except KeyError as e:
                 print(f"Ошибка при обработке вакансии: отсутствует ключ {e}")
             except ValueError as e:
@@ -96,6 +110,9 @@ class Vacancy:
 
         return vacancies_objects
 
+    def to_dict(self):
+        """Метод для преобразования объекта Vacancy в словарь."""
+        return {slot: getattr(self, slot) for slot in self.__slots__}
 
     def __lt__(self, other):
         """Сравнение вакансий по зарплате (меньше)."""
@@ -122,12 +139,7 @@ class Vacancy:
         return (f"Вакансия: {self._title}, Зарплата: {self._salary} ({self._salary_str}), "
                 f"Ссылка: {self._url}, Компания: {self._company}")
 
-hh_api = HeadHunterAPI()
+    @property
+    def url(self):
+        return self._url
 
-# Получение вакансий с hh.ru в формате JSON
-hh_vacancies = hh_api.get_vacancies("Python")
-
-# Преобразование набора данных из JSON в список объектов
-vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
-
-print(vacancies_list)

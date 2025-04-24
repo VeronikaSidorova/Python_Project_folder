@@ -25,19 +25,19 @@ class JSONSaver(VacancyManager):
             return []
 
 
-    def add_vacancy(self, vacancy: Vacancy) -> None:
+    def add_vacancy(self, new_vacancy: Vacancy) -> None:
         """Метод для добавления вакансии в файл"""
-        data = self.get_vacancies()
-        # Проверяем, существует ли уже вакансия с таким же URL
-        if any(item['url'] == vacancy._url for item in data):
-            return  # Выходим из метода, если такая вакансия уже есть
+        existing_data = self.get_vacancies()
 
-        # Если вакансии с таким URL нет, добавляем новую
-        data.append(vacancy)
+        # Преобразование объекта Vacancy в словарь, если это необходимо
+        if isinstance(new_vacancy, Vacancy):
+            new_vacancy = new_vacancy.to_dict()  # Преобразуем объект в словарь
 
-        # Записываем обновленные данные обратно в файл
-        with open(self.__filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+        # Проверка на дублирование
+        if new_vacancy not in existing_data:
+            existing_data.append(new_vacancy)
+            with open(self.__filename, 'w', encoding='utf-8') as file:
+                json.dump(existing_data, file, ensure_ascii=False, indent=4)
 
 
     def delete_vacancy(self, vacancy_id: Vacancy) -> None:
